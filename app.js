@@ -1,11 +1,13 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require('cors');
 const indexRouter = require("./routes/index.js");
 const tweetsRouter = require("./routes/tweets.js");
 
 const { environment } = require('./config');
 const app = express();
 
+app.use(cors({ origin: "http://localhost:4000" }));
 app.use(morgan("dev"));
 app.use(express.json());
 
