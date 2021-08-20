@@ -2,10 +2,14 @@ const express = require('express');
 const { check, validationResult } = require('express-validator');
 const { asyncHandler, handleValidationErrors } = require('../utils.js');
 const bcrypt = require('bcryptjs')
-const { User } = require('../db/models')
+const { User, Tweet } = require('../db/models')
 const { getUserToken } = require('../auth.js')
+const db = require("../db/models");
+
 
 const router = express.Router();
+
+router.use(requireAuth);
 
 const validateUsername =
     check("username")
@@ -21,6 +25,18 @@ const validateEmailAndPassword = [
         .exists({ checkFalsy: true })
         .withMessage("Please provide a password."),
 ];
+
+router.get(
+    "/:id/tweets",
+    asyncHandler(async (req, res) => {
+        const tweets = Tweet.findAll({
+            where: {
+                userId: req.params.id
+            }
+        });
+        res.json({tweets})
+    })
+);
 
 router.post(
     "/",
