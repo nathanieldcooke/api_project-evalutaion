@@ -1,18 +1,32 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Tweet = sequelize.define('Tweet', {
-    message: DataTypes.STRING
-  }, {});
-  Tweet.associate = function(models) {
-    // associations can be defined here
+  const Tweet = sequelize.define(
+    "Tweet",
+    {
+      message: {
+        type: DataTypes.STRING(280),
+        allowNull: false,
+      },
+    },
+    {}
+  );
+  Tweet.associate = function (models) {
+    Tweet.belongsTo(models.User, {
+      as: "user",
+      foreignKey: "userId",
+    });
   };
 
 
-  Tweet.allTweets = async () => await Tweet.findAll();
+  Tweet.allTweets = async () => await Tweet.findAll({
+    include: [{ model: User, as: "user", attributes: ["username"] }],
+    order: [["createdAt", "DESC"]],
+    attributes: ["message"],
+  });
 
   Tweet.oneTweet = async (tweetId) => await Tweet.findByPk(tweetId)
 
-  Tweet.addTweet = async (message) => await Tweet.create( {message} )
+  Tweet.addTweet = async (message, userId) => await Tweet.create( {message, userId} )
 
   Tweet.updateTweet = async (tweetId, message) => {
     console.log(tweetId, message)

@@ -49,7 +49,7 @@ router.post("/", tweetValidator, handleValidationErrors, asyncHandler(async (req
     const { message } = req.body;
     console.log('MSG:', message);
 
-    await Tweet.addTweet(message);
+    await Tweet.addTweet(message, req.user.id);
     // res.send("Welcome to the express-sequelize-starter!");
     // const tweets = await Tweet.allTweets();
     res.redirect("/tweets")
